@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leisure — The Oasis Golf & Aqua Resort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:      #014C83;
+  --navy-dark: #013060;
+  --teal:      #009BBC;
+  --teal-lt:   #00b8d9;
+  --offwhite:  #f4f6f8;
+  --white:     #ffffff;
+  --ink:       #1a1a18;
+  --ink-muted: #78786e;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'DM Sans', system-ui, sans-serif;
+  --px: 80px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: #0a0c0f; color: var(--ink); overflow-x: hidden; }
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 72px; padding: 0 var(--px);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(1,76,131,.94); backdrop-filter: blur(14px);
+}
+.nav-logo img { height: 46px; width: auto; object-fit: contain; filter: brightness(0) invert(1); }
+.nav-logo-text { font-family: var(--serif); font-size: 18px; color: #fff; letter-spacing: .08em; display: none; }
+.nav-links { display: flex; align-items: center; gap: 30px; }
+.nav-links a {
+  font-family: var(--sans); font-size: 10.5px; font-weight: 400;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(255,255,255,.78); transition: color .2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--teal-lt); }
+.nav-right { display: flex; align-items: center; gap: 22px; }
+.nav-portal { font-family: var(--sans); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.55); transition: color .2s; }
+.nav-portal:hover { color: rgba(255,255,255,.85); }
+.btn-gold { font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; background: var(--teal); color: #fff; padding: 15px 34px; transition: background .2s; border: none; cursor: pointer; }
+.btn-gold:hover { background: var(--teal-lt); }
+
+/* ── PAGE TITLE ── */
+.page-title {
+  padding: 118px var(--px) 60px;
+  background: #0a0c0f;
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
+}
+.eyebrow { display: block; font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: .26em; text-transform: uppercase; color: var(--teal); margin-bottom: 16px; }
+.page-title h1 { font-family: var(--serif); font-size: clamp(52px, 7vw, 100px); font-weight: 400; line-height: .93; color: #fff; }
+.page-title h1 em { font-style: italic; color: var(--teal-lt); }
+.page-title-meta { text-align: right; flex-shrink: 0; max-width: 300px; }
+.page-title-desc { font-family: var(--sans); font-size: 13px; font-weight: 300; line-height: 1.9; color: rgba(255,255,255,.38); margin-bottom: 18px; }
+.click-hint { font-family: var(--sans); font-size: 9.5px; font-weight: 400; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.18); }
+
+/* ══════════════════
+   GALLERY
+══════════════════ */
+.gallery { background: #0a0c0f; }
+
+/* ── Shared cell mechanics ── */
+.cell {
+  position: relative; overflow: hidden; cursor: pointer;
+}
+/* ONLY fix images */
+.cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* ensures images fill the box and crop evenly */
+  display: block;
+}
+.cell:hover img { transform: scale(1.06); }
+
+/* Gradient always present at bottom for caption legibility */
+.cell::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 55%; z-index: 1; pointer-events: none;
+  background: linear-gradient(to top, rgba(2,14,32,.78) 0%, transparent 100%);
+}
+
+/* Hover overlay darkens the whole card */
+.c-overlay {
+  position: absolute; inset: 0; z-index: 2;
+  background: rgba(1,20,48,.35);
+  opacity: 0; transition: opacity .4s;
+}
+.cell:hover .c-overlay { opacity: 1; }
+
+/* Caption */
+.c-cap {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 20px 26px 24px; z-index: 3;
+}
+.c-tag {
+  display: block; font-family: var(--sans); font-size: 9px; font-weight: 500;
+  letter-spacing: .26em;  color: var(--teal);
+  margin-bottom: 5px;
+  opacity: 0; transform: translateY(5px);
+  transition: opacity .3s, transform .3s;
+}
+.c-name {
+  font-family: var(--serif); font-weight: 400; color: #fff; line-height: 1.1;
+  opacity: 0; transform: translateY(5px);
+  transition: opacity .3s .05s, transform .3s .05s;
+}
+.cell:hover .c-tag,
+.cell:hover .c-name { opacity: 1; transform: none; }
+
+/* Zoom icon */
+.c-zoom {
+  position: absolute; top: 16px; right: 16px; z-index: 3;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity .3s;
+}
+.cell:hover .c-zoom { opacity: 1; }
+.c-zoom svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 1.6; stroke-linecap: round; }
+
+/* ── ROW 1: one tall full-width frame ── */
+.r1 { height: 88vh; min-height: 580px; }
+.r1 .c-name { font-size: clamp(30px, 4vw, 58px); }
+
+/* ── ROW 2: 58 / 42 ── */
+.r2 { display: grid; grid-template-columns: 58fr 42fr; gap: 3px; margin-top: 3px; }
+.r2 .cell { height: 56vh; min-height: 360px; }
+.r2 .c-name { font-size: clamp(18px, 2.2vw, 30px); }
+
+/* ── ROW 3: 1 / 1 / 1 equal thirds ── */
+.r3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; margin-top: 3px; }
+.r3 .cell { height: 46vh; min-height: 300px; }
+.r3 .c-name { font-size: clamp(16px, 1.9vw, 26px); }
+
+/* ── ROW 4: 42 / 58 (mirror of row 2) ── */
+.r4 { display: grid; grid-template-columns: 42fr 58fr; gap: 3px; margin-top: 3px; }
+.r4 .cell { height: 56vh; min-height: 360px; }
+.r4 .c-name { font-size: clamp(18px, 2.2vw, 30px); }
+
+/* ── ROW 5: 1.2 / 0.8 / 1 ── */
+.r5 { display: grid; grid-template-columns: 1.2fr 0.8fr 1fr; gap: 3px; margin-top: 3px; }
+.r5 .cell { height: 50vh; min-height: 320px; }
+.r5 .c-name { font-size: clamp(16px, 1.9vw, 26px); }
+
+/* ── CTA BAND ── */
+.cta-band {
+  background: var(--navy);
+  padding: 70px var(--px);
+  display: flex; align-items: center; justify-content: space-between; gap: 40px;
+}
+.cta-band h2 { font-family: var(--serif); font-size: clamp(28px, 3.2vw, 46px); font-weight: 400; color: #fff; line-height: 1.12; }
+.cta-band h2 em { font-style: italic; color: var(--teal-lt); }
+.btn-teal { font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; background: var(--teal); color: #fff; padding: 16px 40px; border: none; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background .2s; }
+.btn-teal:hover { background: var(--teal-lt); }
+
+/* ── FOOTER ── */
+footer { background: var(--navy-dark); padding: 64px var(--px) 40px; }
+.footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 56px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,.07); margin-bottom: 24px; }
+.footer-logo { height: 46px; width: auto; object-fit: contain; filter: brightness(0) invert(1); margin-bottom: 16px; }
+.footer-brand-body { font-family: var(--sans); font-size: 12.5px; font-weight: 300; line-height: 1.9; color: rgba(255,255,255,.3); max-width: 230px; }
+.footer-col-h { font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--teal); margin-bottom: 18px; }
+.footer-links { display: flex; flex-direction: column; gap: 10px; }
+.footer-links li a { font-family: var(--sans); font-size: 13px; font-weight: 300; color: rgba(255,255,255,.38); transition: color .2s; }
+.footer-links li a:hover { color: rgba(255,255,255,.82); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-family: var(--sans); font-size: 11px; font-weight: 300; color: rgba(255,255,255,.2); }
+.footer-legal { display: flex; gap: 20px; }
+.footer-legal a { font-family: var(--sans); font-size: 11px; font-weight: 300; color: rgba(255,255,255,.2); transition: color .2s; }
+.footer-legal a:hover { color: rgba(255,255,255,.5); }
+
+/* ── LIGHTBOX ── */
+.lightbox { position: fixed; inset: 0; z-index: 600; background: rgba(4,8,18,.97); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .25s; }
+.lightbox.open { opacity: 1; pointer-events: all; }
+.lb-img-wrap { max-width: 90vw; max-height: 84vh; }
+.lb-img-wrap img { width: auto; height: auto; max-width: 90vw; max-height: 80vh; object-fit: contain; }
+.lb-close { position: fixed; top: 26px; right: 34px; width: 42px; height: 42px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); color: rgba(255,255,255,.65); font-size: 16px; font-family: var(--sans); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s, color .2s; }
+.lb-close:hover { background: rgba(255,255,255,.15); color: #fff; }
+.lb-arrow { position: fixed; top: 50%; transform: translateY(-50%); width: 52px; height: 52px; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.14); color: rgba(255,255,255,.6); font-size: 20px; font-family: var(--sans); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s, color .2s; }
+.lb-arrow:hover { background: rgba(255,255,255,.13); color: #fff; }
+.lb-prev { left: 26px; }
+.lb-next { right: 26px; }
+.lb-meta { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%); text-align: center; }
+.lb-meta-tag { font-family: var(--sans); font-size: 10px; font-weight: 500; letter-spacing: .24em; text-transform: uppercase; color: var(--teal); margin-bottom: 5px; }
+.lb-meta-title { font-family: var(--serif); font-size: 24px; font-weight: 400; color: #fff; margin-bottom: 8px; }
+.lb-counter { font-family: var(--sans); font-size: 10px; font-weight: 300; letter-spacing: .2em; color: rgba(255,255,255,.25); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="website4.html" class="nav-logo">
+    <img src="https://www.theoasis.com.pk/images/oasislogo.png" alt="The Oasis" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="nav-logo-text">The Oasis</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="golf.html">Golf</a></li>
+    <li><a href="aqua.html" class="active">Aqua</a></li>
+    <li><a href="leisure.html">Leisure</a></li>
+    <li><a href="website4.html">Events</a></li>
+    <li><a href="website4.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="http://theoasis.theoasisgolf.com/member/member_login" class="nav-portal">Member Portal</a>
+    <a href="index.html#contact" class="btn-gold">Inquire</a>
+  </div>
+</nav>
+
+
+<!-- GALLERY -->
+<div class="gallery">
+
+
+
+  <!-- ROW 2: 58/42 -->
+  <div class="r2">
+    <div class="cell" data-index="1">
+      <img src="wavepool.jpeg" alt="The Beach">
+      <div class="c-overlay"></div>
+      <div class="c-cap"><p class="c-name">The Beach</p></div>
+      <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+    </div>
+    <div class="cell" data-index="2">
+      <img src="kamikaze.jpeg" alt="Kamikaze Drop">
+      <div class="c-overlay"></div>
+      <div class="c-cap"><p class="c-name">Kamikazzee & Free Fall</p></div>
+      <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+    </div>
+  </div>
+
+  <!-- ROW 3: thirds -->
+  <div class="r3">
+    <div class="cell" data-index="3">
+      <img src="lazyriver.jpeg" alt="Typhoon River">
+      <div class="c-overlay"></div>
+      <div class="c-cap"><p class="c-name">Typhoon River</p></div>
+      <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+    </div>
+    <div class="cell" data-index="4">
+      <img src="kids1.jpeg" alt="Wave Pool">
+      <div class="c-overlay"></div>
+      <div class="c-cap"><p class="c-name">Kids Aqua Zone</p></div>
+      <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+    </div>
+    <div class="cell" data-index="5">
+      <img src="kids2.jpeg" alt="Kids Aqua Zone">
+      <div class="c-overlay"></div>
+      <div class="c-cap"><p class="c-name">Kids Aqua Zone</p></div>
+      <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+    </div>
+  </div>
+
+  <!-- ROW 4: 42/58 (mirror) -->
+  <div class="r4">
+    <div class="cell" data-index="6">
+      <img src="splash.jpeg" alt="Splash Zone">
+      <div class="c-overlay"></div>
+      <div class="c-cap"><p class="c-name">Splash Zone</p></div>
+      <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+    </div>
+    <div class="cell" data-index="7">
+      <img src="aqua.jpeg" alt="Main Pool">
+      <div class="c-overlay"></div>
+      <div class="c-cap"><p class="c-name">Rafting Slide & Zzzip Coaster</p></div>
+      <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+    </div>
+  </div>
+
+    <!-- ROW 4: 42/58 (mirror) -->
+    <div class="r4">
+        <div class="cell" data-index="6">
+          <img src="space.jpeg" alt="Splash Zone">
+          <div class="c-overlay"></div>
+          <div class="c-cap"><p class="c-name">Space Hole</p></div>
+          <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+        <div class="cell" data-index="7">
+          <img src="multi.jpeg" alt="Main Pool">
+          <div class="c-overlay"></div>
+          <div class="c-cap"><p class="c-name">Multi Surf</p></div>
+          <div class="c-zoom"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg></div>
+        </div>
+      </div>
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <img src="https://www.theoasis.com.pk/images/oasislogo.png" alt="The Oasis" class="footer-logo" onerror="this.style.display='none'">
+      <p class="footer-brand-body">Lahore's premier members-only golf and aqua resort — a sanctuary spread over 1,350 kanals along Multan Road.</p>
+    </div>
+    <div>
+      <p class="footer-col-h">Experiences</p>
+      <ul class="footer-links">
+        <li><a href="aqua.html">Aqua</a></li>
+        <li><a href="index.html#golf">Golf</a></li>
+        <li><a href="index.html#leisure">Leisure</a></li>
+        <li><a href="index.html#events">Events</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 The Oasis Golf &amp; Aqua Resort (Pvt.) Limited. All rights reserved.</p>
+    <div class="footer-legal"><a href="#">Privacy policy</a><a href="#">Terms of use</a></div>
+  </div>
+</footer>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lb">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-arrow lb-prev" id="lbPrev">←</button>
+  <button class="lb-arrow lb-next" id="lbNext">→</button>
+  <div class="lb-img-wrap"><img id="lbImg" src="" alt=""></div>
+  <div class="lb-meta">
+    <p class="lb-meta-tag" id="lbTag"></p>
+    <p class="lb-meta-title" id="lbTitle"></p>
+    <p class="lb-counter" id="lbCount"></p>
+  </div>
+</div>
+
+<script>
+const cells = document.querySelectorAll('.cell[data-index]');
+const lb = document.getElementById('lb');
+const lbImg = document.getElementById('lbImg');
+const lbTag = document.getElementById('lbTag');
+const lbTitle = document.getElementById('lbTitle');
+const lbCount = document.getElementById('lbCount');
+let cur = 0;
+
+const data = Array.from(cells).map(el => ({
+  src: el.querySelector('img').src,
+  alt: el.querySelector('img').alt,
+  tag: (el.querySelector('.c-tag') || {}).textContent || '',
+  title: (el.querySelector('.c-name') || {}).textContent || ''
+}));
+
+function show(i) {
+  cur = (i + data.length) % data.length;
+  lbImg.src = data[cur].src;
+  lbImg.alt = data[cur].alt;
+  lbTag.textContent = data[cur].tag;
+  lbTitle.textContent = data[cur].title;
+  lbCount.textContent = (cur + 1) + ' / ' + data.length;
+}
+function open(i) { show(i); lb.classList.add('open'); document.body.style.overflow = 'hidden'; }
+function close() { lb.classList.remove('open'); document.body.style.overflow = ''; }
+
+cells.forEach((el, i) => el.addEventListener('click', () => open(i)));
+document.getElementById('lbClose').addEventListener('click', close);
+document.getElementById('lbPrev').addEventListener('click', () => show(cur - 1));
+document.getElementById('lbNext').addEventListener('click', () => show(cur + 1));
+lb.addEventListener('click', e => { if (e.target === lb) close(); });
+document.addEventListener('keydown', e => {
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') close();
+  if (e.key === 'ArrowLeft') show(cur - 1);
+  if (e.key === 'ArrowRight') show(cur + 1);
+});
+</script>
+</body>
+</html>
